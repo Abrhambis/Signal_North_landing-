@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Signal North Analytics — Data Intelligence Agency</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#08090c;
+  --bg2:#0d0f14;
+  --bg3:#12151c;
+  --border:rgba(255,255,255,0.07);
+  --border2:rgba(255,255,255,0.12);
+  --text:#e8e9ec;
+  --muted:#6b7280;
+  --muted2:#9ca3af;
+  --accent:#b8ff6e;
+  --accent2:#7fffb8;
+  --serif:'Instrument Serif',Georgia,serif;
+  --sans:'Geist',system-ui,sans-serif;
+  --mono:'Geist Mono',monospace;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+
+/* ─── NOISE OVERLAY ─── */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:0;opacity:0.6
+}
+
+/* ─── NAV ─── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.25rem 3rem;
+  background:rgba(8,9,12,0.85);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{display:flex;align-items:center;gap:0.6rem}
+.nav-logo-mark{
+  width:30px;height:30px;border-radius:7px;
+  background:var(--accent);
+  display:flex;align-items:center;justify-content:center;
+}
+.nav-logo-mark svg{width:16px;height:16px}
+.nav-wordmark{font-family:var(--mono);font-size:13px;font-weight:500;letter-spacing:0.02em;color:var(--text)}
+.nav-links{display:flex;align-items:center;gap:2.5rem;list-style:none}
+.nav-links a{font-size:13px;color:var(--muted);transition:color 0.2s;letter-spacing:0.01em}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{
+  background:var(--accent);color:#08090c;
+  font-size:12px;font-weight:500;font-family:var(--mono);letter-spacing:0.06em;
+  padding:0.55rem 1.25rem;border-radius:5px;
+  transition:opacity 0.2s,transform 0.15s;
+}
+.nav-cta:hover{opacity:0.88;transform:translateY(-1px)}
+
+/* ─── HERO ─── */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;padding:7rem 2rem 5rem;
+  position:relative;
+}
+.hero-glow{
+  position:absolute;top:10%;left:50%;transform:translateX(-50%);
+  width:700px;height:500px;
+  background:radial-gradient(ellipse at center, rgba(184,255,110,0.07) 0%, transparent 65%);
+  pointer-events:none;
+}
+.hero-tag{
+  display:inline-flex;align-items:center;gap:0.5rem;
+  background:var(--bg3);border:1px solid var(--border2);
+  border-radius:100px;padding:0.35rem 0.9rem;
+  font-family:var(--mono);font-size:11px;letter-spacing:0.1em;
+  color:var(--muted2);text-transform:uppercase;margin-bottom:2.5rem;
+  animation:fadeUp 0.7s ease both;
+}
+.hero-tag-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+h1.hero-h{
+  font-family:var(--serif);
+  font-size:clamp(2.6rem,6vw,5rem);
+  font-weight:400;
+  line-height:1.1;
+  letter-spacing:-0.02em;
+  max-width:800px;
+  color:#f4f5f7;
+  animation:fadeUp 0.7s ease 0.1s both;
+}
+h1.hero-h em{font-style:italic;color:var(--accent)}
+.hero-sub{
+  margin-top:1.75rem;
+  font-size:clamp(1rem,1.5vw,1.15rem);
+  color:var(--muted2);
+  max-width:520px;
+  line-height:1.7;
+  animation:fadeUp 0.7s ease 0.2s both;
+}
+.hero-actions{
+  display:flex;gap:1rem;margin-top:2.75rem;flex-wrap:wrap;justify-content:center;
+  animation:fadeUp 0.7s ease 0.3s both;
+}
+.btn-primary{
+  background:var(--accent);color:#08090c;
+  font-family:var(--mono);font-size:13px;font-weight:500;letter-spacing:0.05em;
+  padding:0.85rem 2rem;border-radius:6px;
+  transition:opacity 0.2s,transform 0.15s;
+  display:inline-flex;align-items:center;gap:0.5rem;
+}
+.btn-primary:hover{opacity:0.88;transform:translateY(-2px)}
+.btn-secondary{
+  background:transparent;color:var(--text);
+  border:1px solid var(--border2);
+  font-family:var(--mono);font-size:13px;letter-spacing:0.05em;
+  padding:0.85rem 2rem;border-radius:6px;
+  transition:border-color 0.2s,transform 0.15s;
+  display:inline-flex;align-items:center;gap:0.5rem;
+}
+.btn-secondary:hover{border-color:rgba(255,255,255,0.25);transform:translateY(-2px)}
+
+/* ─── STATS BAR ─── */
+.stats-bar{
+  display:flex;justify-content:center;gap:0;
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  background:var(--bg2);
+}
+.stat-item{
+  flex:1;max-width:220px;text-align:center;
+  padding:2rem 1.5rem;border-right:1px solid var(--border);
+}
+.stat-item:last-child{border-right:none}
+.stat-num{font-family:var(--serif);font-size:2.4rem;color:#f4f5f7;line-height:1}
+.stat-label{font-size:12px;color:var(--muted);margin-top:0.4rem;font-family:var(--mono);letter-spacing:0.08em;text-transform:uppercase}
+
+/* ─── SECTIONS ─── */
+section{padding:7rem 2rem;max-width:1200px;margin:0 auto}
+.section-tag{
+  font-family:var(--mono);font-size:11px;letter-spacing:0.14em;
+  color:var(--accent);text-transform:uppercase;margin-bottom:1.25rem;
+}
+h2.section-h{
+  font-family:var(--serif);font-size:clamp(2rem,3.5vw,3rem);
+  font-weight:400;line-height:1.15;letter-spacing:-0.02em;color:#f4f5f7;
+}
+h2.section-h em{font-style:italic}
+.section-sub{font-size:1.05rem;color:var(--muted2);max-width:520px;line-height:1.7;margin-top:1rem}
+
+/* ─── SERVICES ─── */
+.services-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+  background:var(--border);border:1px solid var(--border);border-radius:16px;overflow:hidden;
+  margin-top:4rem;
+}
+.service-card{
+  background:var(--bg2);padding:2.5rem 2rem;
+  transition:background 0.2s;position:relative;overflow:hidden;
+}
+.service-card:hover{background:var(--bg3)}
+.service-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+  opacity:0;transition:opacity 0.3s;
+}
+.service-card:hover::before{opacity:1}
+.service-icon{
+  width:44px;height:44px;border-radius:10px;
+  background:rgba(184,255,110,0.08);border:1px solid rgba(184,255,110,0.15);
+  display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem;
+}
+.service-icon svg{width:20px;height:20px;stroke:var(--accent);fill:none;stroke-width:1.5}
+.service-card h3{font-size:1.05rem;font-weight:500;color:#f4f5f7;margin-bottom:0.75rem}
+.service-card p{font-size:14px;color:var(--muted);line-height:1.65}
+
+/* ─── PROCESS ─── */
+.process-wrap{margin-top:4rem}
+.process-step{
+  display:grid;grid-template-columns:80px 1fr;gap:2rem;
+  padding:2.5rem 0;border-bottom:1px solid var(--border);align-items:start;
+}
+.process-step:last-child{border-bottom:none}
+.step-num{
+  font-family:var(--mono);font-size:11px;letter-spacing:0.1em;
+  color:var(--muted);padding-top:0.25rem;
+}
+.step-body h3{font-size:1.1rem;font-weight:500;color:#f4f5f7;margin-bottom:0.5rem}
+.step-body p{font-size:14px;color:var(--muted);line-height:1.7}
+
+/* ─── ABOUT / FOUNDER ─── */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center;margin-top:4rem}
+.about-img-wrap{position:relative}
+.about-img-wrap img{
+  width:100%;border-radius:12px;
+  filter:grayscale(20%) contrast(1.05);
+  border:1px solid var(--border2);
+}
+.about-badge{
+  position:absolute;bottom:-1.5rem;right:-1.5rem;
+  background:var(--bg3);border:1px solid var(--border2);
+  border-radius:10px;padding:1rem 1.25rem;
+}
+.about-badge-num{font-family:var(--serif);font-size:2rem;color:var(--accent);line-height:1}
+.about-badge-label{font-family:var(--mono);font-size:10px;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase;margin-top:0.25rem}
+.about-text .section-tag{margin-bottom:0.75rem}
+.about-text h2{margin-top:0.25rem}
+.about-text p{font-size:15px;color:var(--muted2);line-height:1.75;margin-top:1rem}
+
+/* ─── CTA BANNER ─── */
+.cta-banner{
+  background:var(--bg2);border:1px solid var(--border2);
+  border-radius:20px;padding:5rem 4rem;text-align:center;
+  position:relative;overflow:hidden;margin:0 2rem;
+}
+.cta-banner::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 0%, rgba(184,255,110,0.06) 0%, transparent 60%);
+  pointer-events:none;
+}
+.cta-banner h2{font-family:var(--serif);font-size:clamp(1.8rem,3vw,2.8rem);font-weight:400;color:#f4f5f7;line-height:1.15;position:relative}
+.cta-banner p{font-size:1rem;color:var(--muted2);max-width:440px;margin:1.25rem auto 2.5rem;line-height:1.7;position:relative}
+.cta-banner .btn-primary{margin:0 auto;position:relative}
+.cta-banner p{font-size:1rem;color:var(--muted2);max-width:440px;margin:1.25rem auto 2rem;line-height:1.7;position:relative}
+
+/* ─── CONTACT FORM ─── */
+.contact-form{max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:0.85rem;position:relative}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:0.85rem}
+.form-field{display:flex;flex-direction:column;gap:0.4rem;text-align:left}
+.form-field label{font-family:var(--mono);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
+.form-field input,.form-field textarea{background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:8px;padding:0.75rem 1rem;font-family:var(--sans);font-size:14px;color:var(--text);outline:none;transition:border-color 0.2s,background 0.2s;width:100%}
+.form-field input::placeholder,.form-field textarea::placeholder{color:var(--muted)}
+.form-field input:focus,.form-field textarea:focus{border-color:rgba(184,255,110,0.4);background:rgba(184,255,110,0.03)}
+.form-field textarea{resize:vertical;min-height:110px;line-height:1.6}
+.form-submit{background:var(--accent);color:#08090c;font-family:var(--mono);font-size:13px;font-weight:500;letter-spacing:0.05em;padding:0.9rem 2rem;border-radius:6px;border:none;cursor:pointer;transition:opacity 0.2s,transform 0.15s;width:100%;margin-top:0.25rem}
+.form-submit:hover{opacity:0.88;transform:translateY(-1px)}
+.form-submit:active{transform:scale(0.98)}
+.form-success{display:none;flex-direction:column;align-items:center;gap:0.75rem;padding:2.5rem;border:1px solid rgba(184,255,110,0.2);border-radius:12px;background:rgba(184,255,110,0.04)}
+.form-success-icon{width:44px;height:44px;border-radius:50%;background:rgba(184,255,110,0.12);border:1px solid rgba(184,255,110,0.3);display:flex;align-items:center;justify-content:center}
+.form-success-icon svg{width:20px;height:20px;stroke:var(--accent);fill:none;stroke-width:2}
+.form-success h3{font-size:1.1rem;font-weight:500;color:#f4f5f7}
+.form-success p{font-size:13px;color:var(--muted2)}
+@media(max-width:520px){.form-row{grid-template-columns:1fr}}
+
+/* ─── FOOTER ─── */
+footer{
+  border-top:1px solid var(--border);
+  padding:4rem 3rem 2.5rem;
+  max-width:1400px;margin:0 auto;
+}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:4rem;margin-bottom:3.5rem}
+.footer-brand p{font-size:13px;color:var(--muted);line-height:1.7;margin-top:1rem;max-width:240px}
+.footer-col h4{font-family:var(--mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:0.6rem}
+.footer-col ul a{font-size:13px;color:var(--muted);transition:color 0.2s}
+.footer-col ul a:hover{color:var(--text)}
+.footer-bottom{
+  display:flex;justify-content:space-between;align-items:center;
+  padding-top:2rem;border-top:1px solid var(--border);
+}
+.footer-bottom p{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:0.04em}
+.footer-social{display:flex;gap:1rem}
+.footer-social a{
+  width:32px;height:32px;border-radius:7px;
+  border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  transition:border-color 0.2s,background 0.2s;
+}
+.footer-social a:hover{border-color:rgba(255,255,255,0.2);background:var(--bg3)}
+.footer-social svg{width:14px;height:14px;fill:var(--muted)}
+
+/* ─── DIVIDER ─── */
+.divider{border:none;border-top:1px solid var(--border);margin:0}
+
+/* ─── ANIMATIONS ─── */
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(16px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.fade-in{opacity:0;transform:translateY(20px);transition:opacity 0.6s ease,transform 0.6s ease}
+.fade-in.visible{opacity:1;transform:none}
+
+/* ─── MOBILE ─── */
+@media(max-width:900px){
+  nav{padding:1.25rem 1.5rem}
+  .nav-links{display:none}
+  .services-grid{grid-template-columns:1fr}
+  .about-grid{grid-template-columns:1fr;gap:3rem}
+  .about-badge{right:1rem}
+  .footer-top{grid-template-columns:1fr 1fr;gap:2rem}
+  .stats-bar{flex-wrap:wrap}
+  .stat-item{border-right:none;border-bottom:1px solid var(--border);max-width:100%;flex:0 0 50%}
+  .cta-banner{padding:3rem 2rem;margin:0 1rem}
+}
+@media(max-width:600px){
+  section{padding:5rem 1.5rem}
+  .footer-top{grid-template-columns:1fr}
+  .footer-bottom{flex-direction:column;gap:1rem;text-align:center}
+  .process-step{grid-template-columns:1fr}
+}
+
+
+/* ─── DATA VIZ PANEL ─── */
+.data-viz-panel{
+  background:var(--bg3);border:1px solid var(--border2);
+  border-radius:14px;overflow:hidden;width:100%;
+  box-shadow:0 0 0 1px rgba(184,255,110,0.06), 0 24px 60px rgba(0,0,0,0.5);
+}
+.dvp-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1rem 1.25rem;border-bottom:1px solid var(--border);
+}
+.dvp-title{font-family:var(--mono);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted2)}
+.dvp-live{display:flex;align-items:center;gap:0.4rem;font-family:var(--mono);font-size:10px;color:var(--accent);letter-spacing:0.08em}
+.dvp-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite}
+.dvp-chart{padding:1rem 1rem 0;background:var(--bg2)}
+.dvp-svg{width:100%;height:auto;display:block}
+.dvp-metrics{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  border-top:1px solid var(--border);
+}
+.dvp-metric{
+  padding:1rem;text-align:center;
+  border-right:1px solid var(--border);
+}
+.dvp-metric:last-child{border-right:none}
+.dvp-metric-val{display:block;font-family:var(--serif);font-size:1.4rem;color:var(--accent);line-height:1}
+.dvp-metric-label{display:block;font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-top:0.35rem}
+.dvp-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0.75rem 1.25rem;border-top:1px solid var(--border);
+  background:var(--bg3);
+}
+.dvp-footer-label{font-family:var(--mono);font-size:9px;letter-spacing:0.06em;color:var(--muted)}
+.dvp-footer-updated{font-family:var(--mono);font-size:9px;color:rgba(184,255,110,0.5)}
+
+/* ─── MODAL ─── */
+.modal-backdrop{display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:1.5rem}
+.modal-backdrop.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:20px;padding:2.75rem;width:100%;max-width:520px;position:relative;animation:modalIn 0.25s ease both}
+@keyframes modalIn{from{opacity:0;transform:translateY(16px) scale(0.98)}to{opacity:1;transform:none}}
+.modal-close{position:absolute;top:1.25rem;right:1.25rem;width:32px;height:32px;border-radius:7px;background:transparent;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:18px;line-height:1;transition:background 0.2s,color 0.2s}
+.modal-close:hover{background:var(--bg3);color:var(--text)}
+.modal h3{font-family:var(--serif);font-size:1.6rem;font-weight:400;color:#f4f5f7;margin-bottom:0.4rem}
+.modal p.modal-sub{font-size:13px;color:var(--muted2);margin-bottom:1.75rem}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-mark">
+      <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2 12 L5 7 L8 9 L11 4 L14 6" stroke="#08090c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <span class="nav-wordmark">Signal North Analytics</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <button onclick="openModal()" class="nav-cta">Get Started →</button>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-tag">
+    <span class="hero-tag-dot"></span>
+    Data Intelligence Agency
+  </div>
+  <h1 class="hero-h">Turn your data into <em>clear decisions.</em></h1>
+  <p class="hero-sub">Signal North Analytics helps organizations cut through the noise, find what matters, and act on it with confidence.</p>
+  <div class="hero-actions">
+    <button onclick="openModal()" class="btn-primary">Start a Free Analysis →</button>
+    <a href="#services" class="btn-secondary">Our Services</a>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat-item fade-in">
+    <div class="stat-num">50+</div>
+    <div class="stat-label">Clients Served</div>
+  </div>
+  <div class="stat-item fade-in">
+    <div class="stat-num">3×</div>
+    <div class="stat-label">Avg. Insight Speed</div>
+  </div>
+  <div class="stat-item fade-in">
+    <div class="stat-num">100%</div>
+    <div class="stat-label">Actionable Output</div>
+  </div>
+  <div class="stat-item fade-in">
+    <div class="stat-num">48h</div>
+    <div class="stat-label">First Report Delivery</div>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="fade-in">
+    <p class="section-tag">What We Do</p>
+    <h2 class="section-h">Analytics services built for <em>real decisions.</em></h2>
+    <p class="section-sub">We go beyond dashboards and surface the signals that drive growth, so your team acts on evidence, not instinct.</p>
+  </div>
+  <div class="services-grid fade-in">
+    <div class="service-card">
+      <div class="service-icon">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <h3>Performance Analytics</h3>
+      <p>Unified reporting across all your channels and platforms. We normalize metrics, remove noise, and surface trends that actually explain what's happening.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      </div>
+      <h3>Cross-Platform Intelligence</h3>
+      <p>We consolidate data from every source into a single consistent view — so you understand the full picture, not just isolated slices.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">
+        <svg viewBox="0 0 24 24"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+      </div>
+      <h3>Growth Signal Identification</h3>
+      <p>We isolate the variables behind growth and decline — audience shifts, format performance, momentum changes — so you know exactly what to double down on.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+      </div>
+      <h3>Custom Dashboards & Reports</h3>
+      <p>Clear, recurring deliverables designed around your workflow. Insight that's easy to act on week after week, without adding complexity.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">
+        <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+      </div>
+      <h3>Data Strategy & Consulting</h3>
+      <p>Whether you're building your analytics foundation or scaling what already works, we help you structure your data for long-term clarity and speed.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+      </div>
+      <h3>Retention & Audience Analysis</h3>
+      <p>Understand exactly where and why you're losing or winning audience attention. Actionable retention modeling tied directly to content and distribution decisions.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- PROCESS -->
+<section id="process">
+  <div class="fade-in">
+    <p class="section-tag">How It Works</p>
+    <h2 class="section-h">A focused process built <em>around your data.</em></h2>
+    <p class="section-sub">Simple, repeatable, and designed to give you answers fast — not add more complexity.</p>
+  </div>
+  <div class="process-wrap fade-in">
+    <div class="process-step">
+      <span class="step-num">01 —</span>
+      <div class="step-body">
+        <h3>Connect your platforms</h3>
+        <p>We unify your performance data from every relevant source into a single, consistent view. No more fragmented spreadsheets or siloed dashboards.</p>
+      </div>
+    </div>
+    <div class="process-step">
+      <span class="step-num">02 —</span>
+      <div class="step-body">
+        <h3>Analyze the real signals</h3>
+        <p>We normalize metrics, remove noise, and surface the patterns that actually explain growth, decline, and momentum shifts — not vanity numbers.</p>
+      </div>
+    </div>
+    <div class="process-step">
+      <span class="step-num">03 —</span>
+      <div class="step-body">
+        <h3>Deliver clear direction</h3>
+        <p>You receive a focused analysis with specific guidance: what to double down on, what to stop, and how to adjust your strategy with confidence.</p>
+      </div>
+    </div>
+    <div class="process-step">
+      <span class="step-num">04 —</span>
+      <div class="step-body">
+        <h3>Iterate and scale</h3>
+        <p>Recurring reporting keeps you ahead of the curve — with insight that compounds as we learn your data over time.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-grid fade-in">
+    <div class="about-img-wrap">
+      <div class="data-viz-panel">
+        <div class="dvp-header">
+          <span class="dvp-title">Growth Signal Analysis</span>
+          <span class="dvp-live"><span class="dvp-dot"></span>Live</span>
+        </div>
+        <div class="dvp-chart">
+          <svg viewBox="0 0 420 200" xmlns="http://www.w3.org/2000/svg" class="dvp-svg">
+            <defs>
+              <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#b8ff6e" stop-opacity="0.18"/>
+                <stop offset="100%" stop-color="#b8ff6e" stop-opacity="0"/>
+              </linearGradient>
+              <linearGradient id="line2Grad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#7fffb8" stop-opacity="0.12"/>
+                <stop offset="100%" stop-color="#7fffb8" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <!-- Grid lines -->
+            <line x1="0" y1="40" x2="420" y2="40" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+            <line x1="0" y1="80" x2="420" y2="80" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+            <line x1="0" y1="120" x2="420" y2="120" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+            <line x1="0" y1="160" x2="420" y2="160" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+            <!-- Y labels -->
+            <text x="8" y="44" fill="rgba(255,255,255,0.25)" font-size="9" font-family="monospace">80%</text>
+            <text x="8" y="84" fill="rgba(255,255,255,0.25)" font-size="9" font-family="monospace">60%</text>
+            <text x="8" y="124" fill="rgba(255,255,255,0.25)" font-size="9" font-family="monospace">40%</text>
+            <text x="8" y="164" fill="rgba(255,255,255,0.25)" font-size="9" font-family="monospace">20%</text>
+            <!-- Area fill main -->
+            <path d="M30,155 C60,148 80,140 110,125 C140,110 160,118 190,100 C220,82 240,88 270,68 C300,48 320,52 350,38 C370,30 390,28 410,22 L410,200 L30,200 Z" fill="url(#areaGrad)"/>
+            <!-- Area fill secondary -->
+            <path d="M30,168 C60,162 80,158 110,148 C140,138 160,142 190,132 C220,122 240,126 270,112 C300,98 320,100 350,90 C370,84 390,80 410,74 L410,200 L30,200 Z" fill="url(#line2Grad)"/>
+            <!-- Secondary line -->
+            <path d="M30,168 C60,162 80,158 110,148 C140,138 160,142 190,132 C220,122 240,126 270,112 C300,98 320,100 350,90 C370,84 390,80 410,74" fill="none" stroke="#7fffb8" stroke-width="1.5" stroke-opacity="0.4" stroke-dasharray="4 3"/>
+            <!-- Main line -->
+            <path d="M30,155 C60,148 80,140 110,125 C140,110 160,118 190,100 C220,82 240,88 270,68 C300,48 320,52 350,38 C370,30 390,28 410,22" fill="none" stroke="#b8ff6e" stroke-width="2" stroke-linecap="round"/>
+            <!-- Highlight dot -->
+            <circle cx="350" cy="38" r="4" fill="#b8ff6e"/>
+            <circle cx="350" cy="38" r="8" fill="#b8ff6e" fill-opacity="0.15"/>
+            <!-- Tooltip -->
+            <rect x="285" y="14" width="90" height="28" rx="5" fill="#1a1f28" stroke="rgba(184,255,110,0.3)" stroke-width="1"/>
+            <text x="295" y="26" fill="#b8ff6e" font-size="9" font-family="monospace" font-weight="500">+34.2% growth</text>
+            <text x="295" y="36" fill="rgba(255,255,255,0.4)" font-size="8" font-family="monospace">Signal detected</text>
+          </svg>
+        </div>
+        <div class="dvp-metrics">
+          <div class="dvp-metric">
+            <span class="dvp-metric-val">+34.2%</span>
+            <span class="dvp-metric-label">Growth Signal</span>
+          </div>
+          <div class="dvp-metric">
+            <span class="dvp-metric-val">92.1%</span>
+            <span class="dvp-metric-label">Retention Rate</span>
+          </div>
+          <div class="dvp-metric">
+            <span class="dvp-metric-val">18ms</span>
+            <span class="dvp-metric-label">Avg. Latency</span>
+          </div>
+        </div>
+        <div class="dvp-footer">
+          <span class="dvp-footer-label">Platforms: YouTube · Spotify · Apple · IAB</span>
+          <span class="dvp-footer-updated">Updated 2m ago</span>
+        </div>
+      </div>
+      <div class="about-badge">
+        <div class="about-badge-num">IE</div>
+        <div class="about-badge-label">Engineering &<br>Analytics</div>
+      </div>
+    </div>
+    <div class="about-text">
+      <p class="section-tag">About</p>
+      <h2 class="section-h">Built by someone who works with <em>real data.</em></h2>
+      <p>I'm the founder of Signal North Analytics. I work hands-on with performance data to help teams understand what's actually driving their results — and how to act on it.</p>
+      <p>With a background in industrial engineering and analytics, I focus on isolating the signals that matter and turning complex data into clear, practical decisions. No fluff, no vanity metrics — just the answers you need to move forward.</p>
+      <div style="margin-top:2rem">
+        <button onclick="openModal()" class="btn-primary" style="display:inline-flex">Let's Talk →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="contact" style="padding-top:0;padding-bottom:6rem">
+  <div class="cta-banner fade-in">
+    <h2>Get clarity on what's driving your growth.</h2>
+    <p>Tell us about your project and we'll be in touch within 24 hours.</p>
+    <form class="contact-form" id="contactForm">
+      <div class="form-row">
+        <div class="form-field">
+          <label for="fname">Your Name</label>
+          <input type="text" id="fname" name="name" placeholder="Jane Smith" required/>
+        </div>
+        <div class="form-field">
+          <label for="femail">Email Address</label>
+          <input type="email" id="femail" name="email" placeholder="jane@company.com" required/>
+        </div>
+      </div>
+      <div class="form-field">
+        <label for="fproject">What do you want to work on?</label>
+        <textarea id="fproject" name="project" placeholder="Tell us about your data, goals, or challenges — we'll take it from there." required></textarea>
+      </div>
+      <button type="submit" class="form-submit">Send Message →</button>
+    </form>
+    <div class="form-success" id="formSuccess">
+      <div class="form-success-icon">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <h3>Message sent!</h3>
+      <p>Thanks for reaching out — we'll be in touch within 24 hours.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a href="#" class="nav-logo">
+        <div class="nav-logo-mark">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M2 12 L5 7 L8 9 L11 4 L14 6" stroke="#08090c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <span class="nav-wordmark">Signal North Analytics</span>
+      </a>
+      <p>Empowering organizations to build solutions with clarity, confidence, and data.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Services</h4>
+      <ul>
+        <li><a href="#">Performance Analytics</a></li>
+        <li><a href="#">Cross-Platform Intelligence</a></li>
+        <li><a href="#">Growth Signals</a></li>
+        <li><a href="#">Custom Dashboards</a></li>
+        <li><a href="#">Data Strategy</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Process</a></li>
+        <li><a href="#">Case Studies</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Connect</h4>
+      <ul>
+        <li><a href="https://www.linkedin.com/in/abrham-bisrat/" target="_blank">LinkedIn</a></li>
+        <li><a href="mailto:abrham@signalnorthanalytics.com">Email</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Signal North Analytics. All rights reserved.</p>
+    <div class="footer-social">
+      <a href="https://www.linkedin.com/in/abrham-bisrat/" target="_blank" aria-label="LinkedIn">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      </a>
+    </div>
+  </div>
+</footer>
+
+<script>
+const FORMSPREE_ID = 'xaqaepey';
+
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible') });
+}, {threshold: 0.1});
+document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+
+function openModal() {
+  document.getElementById('modalBackdrop').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => document.getElementById('mname').focus(), 100);
+}
+function closeModal() {
+  document.getElementById('modalBackdrop').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('modalBackdrop').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeModal();
+});
+
+async function handleFormSubmit(form, successId) {
+  const btn = form.querySelector('.form-submit');
+  btn.textContent = 'Sending…';
+  btn.disabled = true;
+  const name    = form.name.value.trim();
+  const email   = form.email.value.trim();
+  const project = form.project.value.trim();
+  try {
+    const res = await fetch('https://formspree.io/f/' + FORMSPREE_ID, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+      body: JSON.stringify({name, email, project})
+    });
+    if (res.ok) { showSuccess(form, successId); return; }
+  } catch(err) {}
+  const subject = encodeURIComponent('New Inquiry from ' + name);
+  const body    = encodeURIComponent('Name: ' + name + '\nEmail: ' + email + '\n\nWhat they want to work on:\n' + project);
+  window.location.href = 'mailto:abrham@signalnorthanalytics.com?subject=' + subject + '&body=' + body;
+  showSuccess(form, successId);
+}
+
+function showSuccess(form, successId) {
+  form.style.display = 'none';
+  document.getElementById(successId).style.display = 'flex';
+}
+
+document.getElementById('contactForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  handleFormSubmit(this, 'formSuccess');
+});
+
+document.getElementById('modalForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  handleFormSubmit(this, 'modalSuccess');
+});
+</script>
+
+<!-- MODAL -->
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="modal-close" onclick="closeModal()" aria-label="Close">&#x2715;</button>
+    <h3 id="modalTitle">Let's work together.</h3>
+    <p class="modal-sub">Tell us about your project and we'll be in touch within 24 hours.</p>
+    <form class="contact-form" id="modalForm">
+      <div class="form-row">
+        <div class="form-field">
+          <label for="mname">Your Name</label>
+          <input type="text" id="mname" name="name" placeholder="Jane Smith" required/>
+        </div>
+        <div class="form-field">
+          <label for="memail">Email Address</label>
+          <input type="email" id="memail" name="email" placeholder="jane@company.com" required/>
+        </div>
+      </div>
+      <div class="form-field">
+        <label for="mproject">What do you want to work on?</label>
+        <textarea id="mproject" name="project" placeholder="Tell us about your data, goals, or challenges — we'll take it from there." required></textarea>
+      </div>
+      <button type="submit" class="form-submit">Send Message →</button>
+    </form>
+    <div class="form-success" id="modalSuccess">
+      <div class="form-success-icon">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <h3>Message sent!</h3>
+      <p>Thanks for reaching out — we'll be in touch within 24 hours.</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>
