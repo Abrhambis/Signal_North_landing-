@@ -1,0 +1,27 @@
+{
+  "name": "signal-north-landing",
+  "version": "1.0.0",
+  "description": "Signal North Analytics — Data Intelligence Agency",
+  "type": "module",
+  "scripts": {
+    "dev": "npx http-server -p 3000",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Abrhambis/Signal_North_landing-.git"
+  },
+  "keywords": [
+    "analytics",
+    "landing-page"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Abrhambis/Signal_North_landing-/issues"
+  },
+  "homepage": "https://github.com/Abrhambis/Signal_North_landing-#readme",
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
+  }
+}
